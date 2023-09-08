@@ -62,11 +62,12 @@ public class UIController : MonoBehaviour
         var startOpacity = isVisible ? Color.white : new Color(1, 1, 1, 0);
         var fade = target.DOFade(isVisible ? 0 : 1, animationDuration).ChangeStartValue(startOpacity);
 
+        // TODO rewrite this to be shorter,
+        // combine left/right in 1 case
+        // combine up/down in 1 case
+
         switch (animDir)
         {
-            case AnimationDirection.NORMAL:
-                sequence = DOTween.Sequence().Join(fade).OnStart(() => isVisible = !isVisible);
-                break;
             case AnimationDirection.RIGHT:
                 var targetPosX = startPos - (Vector3.right * 50);
                 sequence = DOTween.Sequence().Join(
@@ -75,7 +76,20 @@ public class UIController : MonoBehaviour
                     fade
                 ).OnStart(() => isVisible = !isVisible);
                 break;
+            case AnimationDirection.LEFT:
+                targetPosX = startPos + (Vector3.right * 50);
+                sequence = DOTween.Sequence().Join(
+                    target.transform.DOLocalMoveX(isVisible ? targetPosX.x : startPos.x, animationDuration).ChangeStartValue(isVisible ? startPos : targetPosX)
+                ).Join(
+                    fade
+                ).OnStart(() => isVisible = !isVisible);
+                break;
+            case AnimationDirection.NORMAL:
+            default:
+                sequence = DOTween.Sequence().Join(fade).OnStart(() => isVisible = !isVisible);
+                break;
         }
+
     }
 
     public void Flip(bool isHorizontal)

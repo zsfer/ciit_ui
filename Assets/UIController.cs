@@ -3,6 +3,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Serializable]
 public enum AnimationDirection
 {
     NORMAL,
@@ -22,59 +23,54 @@ public class UIController : MonoBehaviour
     public Ease easingFunction = Ease.InOutCubic;
 
     Sequence sequence;
-
     bool isVisible = false;
+
+    Vector3 startPos;
 
     private void Start()
     {
-        // Configure sequence stuff
         sequence = DOTween.Sequence();
         sequence.SetEase(easingFunction);
+
+        startPos = target.transform.localPosition;
     }
 
     public void Scale()
     {
-        if (!isVisible)
-        {
-            sequence = DOTween.Sequence()
+        sequence = DOTween.Sequence()
             .Join(
-                target.DOFade(1, animationDuration)
+                target.DOFade(isVisible ? 0 : 1, animationDuration)
             ).Join(
-                target.transform.DOScale(1, animationDuration).ChangeStartValue(Vector3.one * 0.9f)
-            ).OnStart(() => isVisible = true);
-        }
-        else
-        {
-            sequence = DOTween.Sequence()
-            .Join(
-                target.DOFade(0, animationDuration)
-            ).Join(
-                target.transform.DOScale(0.9f, animationDuration)
-            ).OnStart(() => isVisible = false);
-        }
+                target.transform.DOScale(isVisible ? 0.9f : 1, animationDuration).ChangeStartValue(isVisible ? Vector3.one : Vector3.one * 0.9f)
+            ).OnStart(() => isVisible = !isVisible);
     }
 
     public void Zoom()
     {
         Restart();
 
-        if (!isVisible)
-        {
-            sequence = DOTween.Sequence().Append(
-                target.transform.DOScale(Vector3.one, animationDuration)
-            ).OnStart(() => isVisible = true);
-        }
-        else
-        {
-            sequence = DOTween.Sequence().Append(
-                target.transform.DOScale(Vector3.zero, animationDuration)
-            ).OnStart(() => isVisible = false);
-        }
+        sequence = DOTween.Sequence().Append(
+            target.transform.DOScale(isVisible ? Vector3.zero : Vector3.one, animationDuration)
+        ).OnStart(() => isVisible = !isVisible);
     }
 
-    public void Fade(AnimationDirection direction)
+    public void Fade(string direction)
     {
+        Restart();
 
+        var animDir = Enum.Parse(typeof(AnimationDirection), direction.ToUpper());
+
+        switch (animDir)
+        {
+            case AnimationDirection.NORMAL:
+                target.DOFade(isVisible ? 0 : 1, animationDuration).ChangeStartValue(isVisible ? Color.white : new Color(1, 1, 1, 0)).OnStart(() => isVisible = !isVisible);
+                break;
+            case AnimationDirection.RIGHT:
+                sequence = DOTween.Sequence().Join(
+                    target.transform.DOLocalMoveX(startPos.x, animationDuration).ChangeStartValue(startPos.x - 10)
+                ).OnStart(() => isVisible = !isVisible);
+                break;
+        }
     }
 
     public void Flip(bool isHorizontal)

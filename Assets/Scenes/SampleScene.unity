@@ -308,7 +308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -452,7 +452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 141870980}
-  animSpeed: 1
+  animSpeed: 0.5
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1100,7 +1100,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 165249522}
         m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: Scale
+        m_MethodName: Zoom
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

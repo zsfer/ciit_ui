@@ -15,7 +15,10 @@ public enum AnimationDirection
 public class UIController : MonoBehaviour
 {
     public Image target;
+
+    [Tooltip("Animation duration in seconds")]
     public float animSpeed = 5f;
+    public Ease easingFunction = Ease.InOutCubic;
 
     Sequence sequence;
 
@@ -23,8 +26,9 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
+        // Configure sequence stuff
         sequence = DOTween.Sequence();
-        DOTween.defaultAutoKill = false;
+        sequence.SetEase(easingFunction);
     }
 
     public void Scale()
@@ -61,9 +65,18 @@ public class UIController : MonoBehaviour
     {
         Restart();
 
-        sequence = DOTween.Sequence().Append(
-            target.transform.DOScale(Vector3.one, animSpeed).ChangeStartValue(Vector3.zero)
-        );
+        if (!isVisible)
+        {
+            sequence = DOTween.Sequence().Append(
+                target.transform.DOScale(Vector3.one, animSpeed).ChangeStartValue(Vector3.zero)
+            ).OnStart(() => isVisible = true);
+        }
+        else
+        {
+            sequence = DOTween.Sequence().Append(
+                target.transform.DOScale(Vector3.zero, animSpeed).ChangeStartValue(Vector3.one)
+            ).OnStart(() => isVisible = false);
+        }
     }
 
     public void Fade(AnimationDirection direction)
@@ -100,8 +113,7 @@ public class UIController : MonoBehaviour
     {
         if (sequence.IsActive() && sequence.IsPlaying()) return;
 
-        sequence.PlayBackwards();
-
-        return;
+        sequence.Kill();
+        target.color = Color.white;
     }
 }

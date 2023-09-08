@@ -57,6 +57,8 @@ public class UIController : MonoBehaviour
     public void Fade(string direction)
     {
         Restart();
+        // force scale to 1 because of fade bug
+        target.transform.DOScale(1, 0); 
 
         var animDir = Enum.Parse(typeof(AnimationDirection), direction.ToUpper());
         var startOpacity = isVisible ? Color.white : new Color(1, 1, 1, 0);
@@ -122,6 +124,7 @@ public class UIController : MonoBehaviour
         if (sequence.IsActive() && sequence.IsPlaying()) return;
 
         sequence.Kill();
+        //target.transform.DOScale(1, 0);
         target.color = Color.white;
     }
 }

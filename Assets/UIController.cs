@@ -16,8 +16,9 @@ public class UIController : MonoBehaviour
 {
     public Image target;
 
+    [Space]
     [Tooltip("Animation duration in seconds")]
-    public float animSpeed = 5f;
+    public float animationDuration = 5f;
     public Ease easingFunction = Ease.InOutCubic;
 
     Sequence sequence;
@@ -33,31 +34,23 @@ public class UIController : MonoBehaviour
 
     public void Scale()
     {
-        float opacity = 0;
-
         if (!isVisible)
         {
             sequence = DOTween.Sequence()
             .Join(
-                DOTween.To(() => opacity, t => opacity = t, 1, animSpeed).OnUpdate(() =>
-                {
-                    target.color = new Color(1, 1, 1, opacity);
-                })
+                target.DOFade(1, animationDuration)
             ).Join(
-                target.transform.DOScale(1, animSpeed).ChangeStartValue(Vector3.one * 0.9f)
+                target.transform.DOScale(1, animationDuration).ChangeStartValue(Vector3.one * 0.9f)
             ).OnStart(() => isVisible = true);
         }
         else
         {
             sequence = DOTween.Sequence()
-                .Join(
-                    DOTween.To(() => opacity, t => opacity = t, 0, animSpeed).ChangeStartValue(1).OnUpdate(() =>
-                    {
-                        target.color = new Color(1, 1, 1, opacity);
-                    })
-                ).Join(
-                    target.transform.DOScale(0.9f, animSpeed).ChangeStartValue(Vector3.one)
-                ).OnStart(() => isVisible = false);
+            .Join(
+                target.DOFade(0, animationDuration)
+            ).Join(
+                target.transform.DOScale(0.9f, animationDuration)
+            ).OnStart(() => isVisible = false);
         }
     }
 
@@ -68,13 +61,13 @@ public class UIController : MonoBehaviour
         if (!isVisible)
         {
             sequence = DOTween.Sequence().Append(
-                target.transform.DOScale(Vector3.one, animSpeed).ChangeStartValue(Vector3.zero)
+                target.transform.DOScale(Vector3.one, animationDuration)
             ).OnStart(() => isVisible = true);
         }
         else
         {
             sequence = DOTween.Sequence().Append(
-                target.transform.DOScale(Vector3.zero, animSpeed).ChangeStartValue(Vector3.one)
+                target.transform.DOScale(Vector3.zero, animationDuration)
             ).OnStart(() => isVisible = false);
         }
     }

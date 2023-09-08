@@ -452,7 +452,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 141870980}
-  animSpeed: 0.5
+  animationDuration: 0.1
+  easingFunction: 10
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

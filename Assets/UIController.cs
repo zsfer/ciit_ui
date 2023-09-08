@@ -59,15 +59,20 @@ public class UIController : MonoBehaviour
         Restart();
 
         var animDir = Enum.Parse(typeof(AnimationDirection), direction.ToUpper());
+        var startOpacity = isVisible ? Color.white : new Color(1, 1, 1, 0);
+        var fade = target.DOFade(isVisible ? 0 : 1, animationDuration).ChangeStartValue(startOpacity);
 
         switch (animDir)
         {
             case AnimationDirection.NORMAL:
-                target.DOFade(isVisible ? 0 : 1, animationDuration).ChangeStartValue(isVisible ? Color.white : new Color(1, 1, 1, 0)).OnStart(() => isVisible = !isVisible);
+                sequence = DOTween.Sequence().Join(fade).OnStart(() => isVisible = !isVisible);
                 break;
             case AnimationDirection.RIGHT:
+                var targetPosX = startPos - (Vector3.right * 50);
                 sequence = DOTween.Sequence().Join(
-                    target.transform.DOLocalMoveX(startPos.x, animationDuration).ChangeStartValue(startPos.x - 10)
+                    target.transform.DOLocalMoveX(isVisible ? targetPosX.x : startPos.x, animationDuration).ChangeStartValue(isVisible ? startPos : targetPosX)
+                ).Join(
+                    fade
                 ).OnStart(() => isVisible = !isVisible);
                 break;
         }
